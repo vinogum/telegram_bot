@@ -30,7 +30,9 @@ class Operation(models.Model):
     def get_sum_by_type(cls, chat_id: int, operation_type: str) -> float:
         if operation_type not in [cls.INCOME, cls.EXPENSE]:
             raise ValueError("Invalid operation type")
-        operations_qs = cls.objects.filter(chat_id=chat_id, operation_type=operation_type)
+        operations_qs = cls.objects.filter(
+            chat_id=chat_id, operation_type=operation_type
+        )
         total_amount = operations_qs.aggregate(total=models.Sum("amount"))["total"] or 0
         return total_amount
 
@@ -39,7 +41,7 @@ class Operation(models.Model):
         total_expense = cls.get_sum_by_type(chat_id, cls.EXPENSE)
         total_income = cls.get_sum_by_type(chat_id, cls.INCOME)
         return total_income - total_expense
-    
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)

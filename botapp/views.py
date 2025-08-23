@@ -8,6 +8,8 @@ from telegram import Update
 from telegram.ext import Dispatcher
 from botapp.command_handlers import FinanceBot
 
+ALLOWED_COMMANDS = {"help", "income", "expense", "balance"}
+
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TelegramWebhookView(APIView):
@@ -16,7 +18,7 @@ class TelegramWebhookView(APIView):
 
         dispatcher = Dispatcher(bot, update_queue=None, workers=0, use_context=True)
         try:
-            tgbot = FinanceBot(dispatcher, allowed_commands={"help", "income", "expense", "balance"})
+            tgbot = FinanceBot(dispatcher, allowed_commands=ALLOWED_COMMANDS)
         except Exception as e:
             update.message.reply_text(str(e))
             return Response(status=status.HTTP_200_OK)

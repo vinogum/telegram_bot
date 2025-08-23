@@ -1,6 +1,5 @@
-from telegram.ext import CommandHandler, Dispatcher # type: ignore
+from telegram.ext import CommandHandler, Dispatcher
 from botapp.models import Operation, Chat
-from telegram import Update, Bot # type: ignore
 
 
 class CommandRegistrar:
@@ -39,7 +38,9 @@ class FinanceBot(CommandRegistrar):
         # If we have no arguments, then we give the income or expense amount
         if len(context.args) == 0:
             total_sum = Operation.get_sum_by_type(chat_id, operation_type)
-            update.message.reply_text(f"Total {operation_type.capitalize()}: {sign}{total_sum}")
+            update.message.reply_text(
+                f"Total {operation_type.capitalize()}: {sign}{total_sum}"
+            )
             return
 
         # First argument is amount
@@ -56,22 +57,20 @@ class FinanceBot(CommandRegistrar):
         note = " ".join(context.args[1:]) if len(context.args) > 1 else ""
 
         chat, _ = Chat.objects.get_or_create(
-            chat_id=chat_id,
-            username=update.effective_user.username
+            chat_id=chat_id, username=update.effective_user.username
         )
 
         try:
             Operation.objects.create(
-                chat=chat,
-                amount=amount,
-                operation_type=operation_type,
-                note=note
+                chat=chat, amount=amount, operation_type=operation_type, note=note
             )
         except Exception:
             update.message.reply_text("Something went wrong. Please check /help")
             return
 
-        update.message.reply_text(f"{operation_type.capitalize()} was added: {sign}{amount}")
+        update.message.reply_text(
+            f"{operation_type.capitalize()} was added: {sign}{amount}"
+        )
 
     @classmethod
     def income(cls, update, context):
