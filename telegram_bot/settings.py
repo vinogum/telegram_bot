@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # My constants
 
-NGROK_URL = "https://468b3b03d4eb.ngrok-free.app"
+NGROK_URL = "https://2030f524135b.ngrok-free.app"
 
 WEBHOOK_URL = f"{NGROK_URL}/telegram/webhook/"
 
@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Kyiv"
 
 USE_I18N = True
 

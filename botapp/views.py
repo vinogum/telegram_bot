@@ -8,7 +8,7 @@ from telegram import Update
 from telegram.ext import Dispatcher
 from botapp.command_handlers import FinanceBot
 
-ALLOWED_COMMANDS = {"help", "income", "expense", "balance"}
+ALLOWED_COMMANDS = ["help", "income", "expense", "balance", "report", "start", "delete", "update"]
 
 
 @method_decorator(csrf_exempt, name="dispatch")
