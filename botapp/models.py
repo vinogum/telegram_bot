@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Chat(models.Model):
-    chat_id = models.PositiveBigIntegerField(primary_key=True)
+    id = models.PositiveBigIntegerField(primary_key=True)
     username = models.CharField(blank=False, null=False)
 
 
@@ -18,7 +18,7 @@ class Operation(models.Model):
         (EXPENSE, "Expense"),
     ]
 
-    chat = models.ForeignKey(Chat, on_delete=models.DO_NOTHING)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)]
     )

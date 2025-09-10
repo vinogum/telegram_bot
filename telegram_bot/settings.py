@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # My constants
 
-NGROK_URL = "https://fd8f606447db.ngrok-free.app"
+NGROK_URL = "https://5a4c5c72cf57.ngrok-free.app"
 
 WEBHOOK_URL = f"{NGROK_URL}/telegram/webhook/"
 
