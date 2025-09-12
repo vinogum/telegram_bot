@@ -1,20 +1,18 @@
-from botapp.parsers import IncomeAndExpenseParser, DeleteParser, UpdateParser, ReportParser
-from botapp.models import Operation, Chat
+from botapp.models import Operation, Chat, OperationType
+from botapp.utils import get_operation_sign, reply_text
+from botapp.constants import HELP_TEXT, START_TEXT
 from django.utils import timezone
-from botapp import constants
-from botapp.utils import *
+from botapp import parsers
 
 
 def handle_income_or_expense(update, context, operation_type):
-    parser = IncomeAndExpenseParser(update, context)
-
-    chat_id = get_chat_id(update)
-    sign = get_sign_by_type(operation_type)
+    parser = parsers.IncomeAndExpenseParser(update, context)
+    sign = get_operation_sign(operation_type)
 
     # If we have no arguments, then we give the income or expense amount
     if not parser.is_args():
-        total_sum = Operation.get_sum_by_type(chat_id, operation_type)
-        reply_text(update, f"Total {operation_type}: {sign}{total_sum:.2f}")
+        total_sum = Operation.get_sum_by_type(parser.chat_id, operation_type)
+        reply_text(update, f"Total {operation_type.value}: {sign}{total_sum:.2f}")
         return
     
     # Else, we parse command arguments to perform other command
@@ -24,28 +22,25 @@ def handle_income_or_expense(update, context, operation_type):
     
     amount = parser.validated_data["amount"]
     note = parser.validated_data["note"]
-    username = get_username(update)
-
+    username = parser.username
     
-    chat, _ = Chat.objects.get_or_create(id=chat_id, username=username)
+    chat, _ = Chat.objects.get_or_create(id=parser.chat_id, username=username)
 
     Operation.objects.create(
         chat=chat, amount=amount, operation_type=operation_type, note=note
     )
-    reply_text(update, f"{operation_type.capitalize()} added: {sign}{amount:.2f}")
+    reply_text(update, f"{operation_type.value.capitalize()} added: {sign}{amount:.2f}")
 
 
 def delete(update, context):
-    chat_id = get_chat_id(update)
-    parser = DeleteParser(update, context)
-    print(parser.error)
+    parser = parsers.DeleteParser(update, context)
 
     if not parser.is_valid():
         reply_text(update, parser.error)
         return
 
     operation_id = parser.validated_data["operation_id"]
-    operation = Operation.objects.filter(id=operation_id, chat_id=chat_id).first()
+    operation = Operation.objects.filter(id=operation_id, chat_id=parser.chat_id).first()
     if not operation:
         reply_text(update, "You have no such transaction")
         return
@@ -55,8 +50,7 @@ def delete(update, context):
 
 
 def update(update, context):
-    chat_id = get_chat_id(update)
-    parser = UpdateParser(update, context)
+    parser = parsers.UpdateParser(update, context)
 
     if not parser.is_valid():
         reply_text(update, parser.error)
@@ -64,7 +58,7 @@ def update(update, context):
     
     operation_id = parser.validated_data["operation_id"]
 
-    operation = Operation.objects.filter(id=operation_id, chat_id=chat_id).first()
+    operation = Operation.objects.filter(id=operation_id, chat_id=parser.chat_id).first()
     if not operation:
         reply_text(update, "Transaction not found")
         return
@@ -78,15 +72,16 @@ def update(update, context):
 
 
 def report(update, context):
-    parser = ReportParser(update, context)
+    parser = parsers.ReportParser(update, context)
     if not parser.is_valid():
         reply_text(update, parser.error)
+        return
 
     operations = parser.validated_data["operations"]
 
     lines = []
     for t in operations:
-        sign = PLUS_SIGN if t.operation_type == Operation.INCOME else MINUS_SIGN
+        sign = get_operation_sign(t.operation_type)
         lines.append(
             f"ID: {t.id}\n"
             f"Amount: {sign}{t.amount:.2f}\n"
@@ -97,23 +92,23 @@ def report(update, context):
     reply_text(update, report)
 
 
-def help(update, context):
-    reply_text(update, constants.HELP_TEXT)
-
-
-def income(update, context):
-    handle_income_or_expense(update, context, Operation.INCOME)
-
-
-def expense(update, context):
-    handle_income_or_expense(update, context, Operation.EXPENSE)
-
-
 def balance(update, context):
-    chat_id = get_chat_id(update)
+    chat_id = update.effective_chat.id
     balance = Operation.get_balance(chat_id=chat_id)
     reply_text(update, f"Total balance: {balance:.2f}")
 
 
+def help(update, context):
+    reply_text(update, HELP_TEXT)
+
+
+def income(update, context):
+    handle_income_or_expense(update, context, OperationType.INCOME)
+
+
+def expense(update, context):
+    handle_income_or_expense(update, context, OperationType.EXPENSE)
+
+
 def start(update, context):
-    reply_text(update, constants.START_TEXT)
+    reply_text(update, START_TEXT)

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # My constants
 
-NGROK_URL = "https://5a4c5c72cf57.ngrok-free.app"
+NGROK_URL = "https://fd9013288cb5.ngrok-free.app"
 
 WEBHOOK_URL = f"{NGROK_URL}/telegram/webhook/"
 
@@ -32,7 +32,7 @@ TELEGRAM_BOT_TOKEN = config("TELEGRAM_BOT_TOKEN")
 NGROK_DOMAIN = urlparse(NGROK_URL).netloc
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6ag6b36nx3b(&5h#-bvzq7#7ru1pwkhh^8!=#n%^bf8a(41!ra"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

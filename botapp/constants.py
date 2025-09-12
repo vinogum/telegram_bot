@@ -30,7 +30,7 @@ HELP_TEXT = (
 MINUS_SIGN = "-"
 PLUS_SIGN = "+"
 
-ALLOWED_COMMANDS = [
+ALLOWED_COMMANDS = (
     "help",
     "income",
     "expense",
@@ -39,4 +39,8 @@ ALLOWED_COMMANDS = [
     "start",
     "delete",
     "update",
-]
+)
+
+# This module contains all Telegram commands
+
+COMMANDS_MODULE = "botapp.commands"
