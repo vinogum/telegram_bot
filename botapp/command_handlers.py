@@ -35,7 +35,9 @@ class CommandRegistrar:
         try:
             return importlib.import_module(self._commands_module_path)
         except ModuleNotFoundError:
-            raise CommandRegistrarError(f"No such commands module: {self._commands_module_path}")
+            raise CommandRegistrarError(
+                f"No such commands module: {self._commands_module_path}"
+            )
 
     def validate(self):
         commands_module = self.get_commands_module()

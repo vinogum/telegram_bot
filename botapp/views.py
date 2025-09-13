@@ -15,15 +15,13 @@ from botapp.telegram_bot import bot
 class TelegramWebhookView(APIView):
     def post(self, request, *args, **kwargs):
         update = Update.de_json(request.data, bot)
-        dispatcher = Dispatcher(
-            bot, update_queue=None, workers=0, use_context=True
-        )
+        dispatcher = Dispatcher(bot, update_queue=None, workers=0, use_context=True)
 
         registrar = CommandRegistrar(ALLOWED_COMMANDS, COMMANDS_MODULE)
         if not registrar.is_valid():
             reply_text(update, registrar.error)
             return Response(status=status.HTTP_200_OK)
-        
+
         registrar.register_commands(dispatcher)
         dispatcher.process_update(update)
         return Response(status=status.HTTP_200_OK)

@@ -35,6 +35,7 @@ def parse_note(note: list) -> str:
 
 class ParserUtils:
     """The properties can be used even without validation `.is_valid()`."""
+
     @property
     def chat_id(self):
         if not hasattr(self, "update"):
@@ -49,7 +50,7 @@ class ParserUtils:
 
 
 class Parser:
-    def __init__(self, update, context):         
+    def __init__(self, update, context):
         self.__context = context
         self.__update = update
         self.__is_valid = False
@@ -59,7 +60,7 @@ class Parser:
     @property
     def context(self):
         return self.__context
-    
+
     @property
     def update(self):
         return self.__update
@@ -85,14 +86,14 @@ class Parser:
         except ParsingError as e:
             self.__error = str(e)
             return False
-        
+
         self.__is_valid = True
         return True
 
     def parse_data(self):
         """There must be custom logic here."""
         raise NotImplementedError()
-    
+
     def is_args(self):
         return bool(self.context.args)
 
@@ -110,10 +111,10 @@ class DeleteParser(Parser, ParserUtils):
         command_args = self.context.args
         if not self.is_args():
             raise ParsingError("One argument is required")
-        
+
         operation_id = parse_id(command_args[0])
         return {"operation_id": operation_id}
-    
+
 
 class UpdateParser(Parser, ParserUtils):
     def parse_data(self):
@@ -129,7 +130,9 @@ class UpdateParser(Parser, ParserUtils):
 
         # If there is only amount or amount with note
         if startswith_plus or startswith_minus:
-            operation_type = OperationType.INCOME if startswith_plus else OperationType.EXPENSE
+            operation_type = (
+                OperationType.INCOME if startswith_plus else OperationType.EXPENSE
+            )
             amount = parse_amount(command_args[1])
 
             if len(command_args) >= 3:
@@ -141,9 +144,9 @@ class UpdateParser(Parser, ParserUtils):
 
         return {
             "operation_id": operation_id,
-            "amount": amount, 
+            "amount": amount,
             "note": note,
-            "operation_type": operation_type, 
+            "operation_type": operation_type,
         }
 
 
@@ -152,7 +155,7 @@ class ReportParser(Parser, ParserUtils):
         command_args = self.context.args
         if len(command_args) != 1:
             raise ParsingError("One argument is required")
-        
+
         chat_id = self.chat_id
         interval = get_interval(command_args[0])
         operations = Operation.get_transactions_by_interval(chat_id, interval)

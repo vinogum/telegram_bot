@@ -14,16 +14,16 @@ def handle_income_or_expense(update, context, operation_type):
         total_sum = Operation.get_sum_by_type(parser.chat_id, operation_type)
         reply_text(update, f"Total {operation_type.value}: {sign}{total_sum:.2f}")
         return
-    
+
     # Else, we parse command arguments to perform other command
     if not parser.is_valid():
         reply_text(update, parser.error)
         return
-    
+
     amount = parser.validated_data["amount"]
     note = parser.validated_data["note"]
     username = parser.username
-    
+
     chat, _ = Chat.objects.get_or_create(id=parser.chat_id, username=username)
 
     Operation.objects.create(
@@ -40,7 +40,9 @@ def delete(update, context):
         return
 
     operation_id = parser.validated_data["operation_id"]
-    operation = Operation.objects.filter(id=operation_id, chat_id=parser.chat_id).first()
+    operation = Operation.objects.filter(
+        id=operation_id, chat_id=parser.chat_id
+    ).first()
     if not operation:
         reply_text(update, "You have no such transaction")
         return
@@ -55,14 +57,16 @@ def update(update, context):
     if not parser.is_valid():
         reply_text(update, parser.error)
         return
-    
+
     operation_id = parser.validated_data["operation_id"]
 
-    operation = Operation.objects.filter(id=operation_id, chat_id=parser.chat_id).first()
+    operation = Operation.objects.filter(
+        id=operation_id, chat_id=parser.chat_id
+    ).first()
     if not operation:
         reply_text(update, "Transaction not found")
         return
-    
+
     for attr, value in parser.validated_data.items():
         if value:
             setattr(operation, attr, value)

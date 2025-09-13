@@ -74,10 +74,8 @@ class Operation(models.Model):
     def get_sum_by_type(cls, chat_id: int, operation_type) -> float:
         if operation_type not in OperationType:
             raise ValueError("Invalid operation type")
-        
-        operations = cls.objects.filter(
-            chat_id=chat_id, operation_type=operation_type
-        )
+
+        operations = cls.objects.filter(chat_id=chat_id, operation_type=operation_type)
         total_amount = operations.aggregate(total=models.Sum("amount"))["total"] or 0
         return total_amount
 

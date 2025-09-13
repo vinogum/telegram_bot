@@ -10,8 +10,8 @@ START_TEXT = (
 )
 
 HELP_TEXT = (
-    "/help - Show a list of all commands\n" 
-    "/income - Show total income or add new income\n" 
+    "/help - Show a list of all commands\n"
+    "/income - Show total income or add new income\n"
     "/income <amount> - Add income of <amount>\n"
     "/income <amount> [note] - Add income of <amount> with a note\n"
     "/expense - Show total expenses or add new expense\n"

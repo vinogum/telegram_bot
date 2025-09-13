@@ -1,4 +1,4 @@
-from telegram_bot.settings import BOT_TOKEN
+from telegram_bot.settings import BOT_TOKEN, TELEGRAM_BOT_TOKEN
 import requests
 
 
