@@ -8,7 +8,7 @@ from telegram.ext import Dispatcher
 from botapp.utils import reply_text
 from rest_framework import status
 from telegram import Update
-from botapp.telegram_bot import bot
+from botapp.bot import bot
 
 
 @method_decorator(csrf_exempt, name="dispatch")

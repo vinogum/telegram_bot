@@ -1,5 +1,5 @@
 from telegram_bot.settings import WEBHOOK_URL
-from botapp.telegram_bot import bot
+from botapp.bot import bot
 
 
 bot.set_webhook(url=WEBHOOK_URL)
